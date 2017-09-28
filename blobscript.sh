@@ -1,6 +1,6 @@
 #!/bin/sh
 # blobscript @pookjw
-TOOL_VERSION=1
+TOOL_VERSION=2
 
 function defaultSettings(){
 	PATH_IPSW=
@@ -20,9 +20,9 @@ function showInterface(){
 		echo "blobscript.sh (Version: ${TOOL_VERSION})"
 		showLines "-"
 		if [[ -z "${PATH_IPSW}" ]]; then
-			echo "(1) IPSW: (undefined)"
+			echo "(1) ipsw: (undefined)"
 		else
-			echo "(1) IPSW: ${PATH_IPSW}"
+			echo "(1) ipsw: ${PATH_IPSW}"
 		fi
 		if [[ -z "${URL_TSSCHECKER}" ]]; then
 			echo "(2) tsschecker(release): (undefined)"
@@ -45,16 +45,16 @@ function showInterface(){
 			echo "(5) ecid: ${ECID}"
 		fi
 		if [[ -z "${OS_VERSION}" ]]; then
-			echo "(6) Version: (undefined)"
+			echo "(6) version: (undefined)"
 		else
-			echo "(6) Version: ${OS_VERSION}"
+			echo "(6) version: ${OS_VERSION}"
 		fi
 		if [[ -z "${OS_BUILD}" ]]; then
-			echo "(7) Build: (undefined)"
+			echo "(7) build: (undefined)"
 		else
-			echo "(7) Build: ${OS_BUILD}"
+			echo "(7) build: ${OS_BUILD}"
 		fi
-		echo "(8) Beta: ${BETA_FIRMWARE}"
+		echo "(8) beta: ${BETA_FIRMWARE}"
 		showLines "-"
 		echo "Available commands: 1~8, start, exit"
 		showLines "*"
