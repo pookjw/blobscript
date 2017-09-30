@@ -1,6 +1,6 @@
 #!/bin/sh
 # blobscript @pookjw
-TOOL_VERSION=2
+TOOL_VERSION=3
 
 function defaultSettings(){
 	PATH_IPSW=
@@ -8,8 +8,8 @@ function defaultSettings(){
 	PATH_OUTPUT=
 	DEVICE=
 	ECID=
-	OS_VERSION=
-	OS_BUILD=
+	OS_VERSION=auto
+	OS_BUILD=auto
 	BETA_FIRMWARE=NO
 }
 
@@ -46,11 +46,15 @@ function showInterface(){
 		fi
 		if [[ -z "${OS_VERSION}" ]]; then
 			echo "(6) version: (undefined)"
+		elif [[ "${OS_VERSION}" == auto ]]; then
+			echo "(6) version: (auto)"
 		else
 			echo "(6) version: ${OS_VERSION}"
 		fi
 		if [[ -z "${OS_BUILD}" ]]; then
 			echo "(7) build: (undefined)"
+		elif [[ "${OS_BUILD}" == auto ]]; then
+			echo "(7) build: (auto)"
 		else
 			echo "(7) build: ${OS_BUILD}"
 		fi
@@ -130,6 +134,31 @@ function extractFirmware(){
 }
 
 function startProject(){
+	if [[ "${OS_VERSION}" == auto ]]; then
+		SKIP_ONCE=NO
+		for VALUE in $(cat /tmp/BuildManifest.plist); do
+			if [[ "${SKIP_ONCE}" == YES ]]; then
+				OS_VERSION="$(echo "${VALUE}" | cut -d">" -f2 | cut -d"<" -f1)"
+				break
+			fi
+			if [[ "${VALUE}" == "<key>ProductVersion</key>" ]]; then
+				SKIP_ONCE=YES
+			fi
+		done
+	fi
+	if [[ "${OS_BUILD}" == auto ]]; then
+		SKIP_ONCE=NO
+		for VALUE in $(cat /tmp/BuildManifest.plist); do
+			if [[ "${SKIP_ONCE}" == YES ]]; then
+				OS_BUILD="$(echo "${VALUE}" | cut -d">" -f2 | cut -d"<" -f1)"
+				break
+			fi
+			if [[ "${VALUE}" == "<key>ProductBuildVersion</key>" ]]; then
+				SKIP_ONCE=YES
+			fi
+		done
+	fi
+	echo "${OS_VERSION} ${OS_BUILD}"
 	cd /tmp
 	if [[ "${BETA_FIRMWARE}" == YES ]]; then
 		/tmp/tsschecker/tsschecker_macos -d "${DEVICE}" -e "${ECID}" -m /tmp/BuildManifest.plist -i --beta "${OS_VERSION}" --buildid "${OS_BUILD}" -s
